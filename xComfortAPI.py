@@ -14,8 +14,22 @@ class Device:
         self.info = deviceInfo
         self.zone = zone
 
+    def id(self):
+        return self.info['id']
+
     def printInfo(self):
         print("{:<15} {:>40} {:>4}".format(self.info['id'], self.info['name'], "{}{}".format(self.info['value'], self.info['unit'])))
+
+    def setState(self, state):
+        if (state in self.info['operations']):
+            return self._SHC.query("StatusControlFunction/controlDevice", [self.zone['zoneId'], self.id(), state])
+        raise Exception("The current device has no operation {}".format(operation))
+
+    def turnOn(self):
+        return self.setState('on')
+
+    def turnOff(self):
+        return self.setState('off')
 
 class SHCAPI:
 
