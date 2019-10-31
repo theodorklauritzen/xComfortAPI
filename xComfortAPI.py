@@ -94,5 +94,13 @@ class SHCAPI:
             for i in zone:
                 ret += convertDeviceArray(self.query('StatusControlFunction/getDevices', [i['zoneId'], '']), i)
             return ret
+        elif (type(zone) == str):
+            zoneInfo = None
+            for i in self.getZones():
+                if (i['zoneId'] == zone):
+                    zoneInfo = i
+            if (zoneInfo == None):
+                raise Exception("The zone string {} is not a valid zone on the SHC".format(zone))
+            return convertDeviceArray(self.query('StatusControlFunction/getDevices', [zone, '']), zoneInfo)
         else:
             return convertDeviceArray(self.query('StatusControlFunction/getDevices', [zone['zoneId'], '']), zone)
