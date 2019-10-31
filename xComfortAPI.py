@@ -7,6 +7,16 @@ class invalidCredentials(Exception):
     def __init__(self, message):
         self.message = message
 
+class Device:
+
+    def __init__(self, SHC, deviceInfo, zone):
+        self._SHC = SHC
+        self.info = deviceInfo
+        self.zone = zone
+
+    def printInfo(self):
+        print("{:<15} {:>40} {:>4}".format(self.info['id'], self.info['name'], "{}{}".format(self.info['value'], self.info['unit'])))
+
 class SHCAPI:
 
     _API_PATH = '/remote/json-rpc'
@@ -70,12 +80,19 @@ class SHCAPI:
         return self.query("HFM/getZones")
 
     def getDevices(self, zone=[]):
+
+        def convertDeviceArray(arr, zone):
+            ret = []
+            for i in arr:
+                ret.append(Device(self, i, zone))
+            return ret
+
         if(type(zone) == list):
             ret = []
             if(len(zone) == 0):
                 zone = self.getZones()
             for i in zone:
-                ret += self.query('StatusControlFunction/getDevices', [i['zoneId'], ''])
+                ret += convertDeviceArray(self.query('StatusControlFunction/getDevices', [i['zoneId'], '']), i)
             return ret
         else:
-            return self.query('StatusControlFunction/getDevices', [zone['zoneId'], ''])
+            return convertDeviceArray(self.query('StatusControlFunction/getDevices', [zone['zoneId'], '']), zone)
