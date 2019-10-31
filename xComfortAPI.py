@@ -31,6 +31,12 @@ class Device:
     def turnOff(self):
         return self.setState('off')
 
+    def switchOn(self):
+        return self.setState('directSwitchOn')
+
+    def switchOff(self):
+        return self.setState('directSwitchOff')
+
 class SHCAPI:
 
     _API_PATH = '/remote/json-rpc'
@@ -118,3 +124,13 @@ class SHCAPI:
             return convertDeviceArray(self.query('StatusControlFunction/getDevices', [zone, '']), zoneInfo)
         else:
             return convertDeviceArray(self.query('StatusControlFunction/getDevices', [zone['zoneId'], '']), zone)
+
+    def getDevice(self, deviceId, arr=[]):
+        if(len(arr) == 0):
+            arr = self.getDevices()
+
+        for i in arr:
+            if (i.id() == deviceId):
+                return i
+
+        raise Exception("The Device id {} is not found".format(deviceId))
