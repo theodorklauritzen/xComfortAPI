@@ -63,6 +63,12 @@ class SHCAPI:
         else:
             return requests.utils.dict_from_cookiejar(res.cookies)['JSESSIONID']
 
+    def disconnect(self):
+        headers = {
+			'Cookie': 'JSESSIONID=' + self.sessionId,
+		}
+        requests.get("{}/logout".format(self.url), headers=headers)
+
     def query(self, method, params=['', '']):
         apiUrl = self.url + self._API_PATH
 
