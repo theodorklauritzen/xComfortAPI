@@ -59,3 +59,23 @@ class SHCAPI:
             raise
 
         return res['result']
+
+    def getSystemInfo(self):
+        return self.query("Settings/getSystemInfo")
+
+    def getDiagnostics(self):
+        return self.query("Diagnostics/getAllSystemStates")
+
+    def getZones(self):
+        return self.query("HFM/getZones")
+
+    def getDevices(self, zone=[]):
+        if(type(zone) == list):
+            ret = []
+            if(len(zone) == 0):
+                zone = self.getZones()
+            for i in zone:
+                ret += self.query('StatusControlFunction/getDevices', [i['zoneId'], ''])
+            return ret
+        else:
+            return self.query('StatusControlFunction/getDevices', [zone['zoneId'], ''])
